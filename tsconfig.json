@@ -1,0 +1,13 @@
+{
+    "compileOnSave": true,
+    "exclude": ["node_modules", "example"],
+    "compilerOptions": {
+        "module": "commonjs",
+        "declaration": true,
+        "declarationMap": true,
+        "target": "es2015",
+        "lib": ["es2019", "scripthost"],
+        "alwaysStrict": true,
+        "rootDirs": ["./**"]
+    }
+}
