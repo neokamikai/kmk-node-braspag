@@ -20,17 +20,17 @@ const endpoints = {
     Client3DS: { auth: { method: 'POST', url: '/v2/auth/token' } },
     PagadorClient: {
         createTransaction: { method: 'POST', url: '/v2/sales/' },
-        capturePaymentTransaction: { method: 'PUT', url: '/v2/sales/{PaymentId}/capture' },
-        cancelTransaction: { method: 'PUT', url: '/v2/sales/{PaymentId}/void', queryString: { amount: { required: false, validator: numberValidator } } },
-        updateRecurrentCustomerInfo: { method: 'PUT', url: '/v2/RecurrentPayment/{RecurrentPaymentId}/Customer' },
-        updateRecurrentEndDate: { method: 'PUT', url: '/v2/RecurrentPayment/{RecurrentPaymentId}/EndDate' },
-        updateRecurrentInterval: { method: 'PUT', url: '/v2/RecurrentPayment/{RecurrentPaymentId}/Interval' },
-        updateRecurrentRecurrencyDay: { method: 'PUT', url: '/v2/RecurrentPayment/{RecurrentPaymentId}/RecurrencyDay' },
-        updateRecurrentAmount: { method: 'PUT', url: '/v2/RecurrentPayment/{RecurrentPaymentId}/Amount' },
-        updateRecurrentNextPaymentDate: { method: 'PUT', url: '/v2/RecurrentPayment/{RecurrentPaymentId}/NextPaymentDate' },
-        updateRecurrentPaymentInfo: { method: 'PUT', url: '/v2/RecurrentPayment/{RecurrentPaymentId}/Payment' },
-        deactivateRecurrency: { method: 'PUT', url: '/v2/RecurrentPayment/{RecurrentPaymentId}/Deactivate' },
-        reactivateRecurrency: { method: 'PUT', url: '/v2/RecurrentPayment/{RecurrentPaymentId}/Reactivate' },
+        capturePaymentTransaction: (PaymentId) => ({ method: 'PUT', url: `/v2/sales/${encodeURIComponent(PaymentId)}/capture` }),
+        cancelTransaction: (PaymentId) => ({ method: 'PUT', url: `/v2/sales/${encodeURIComponent(PaymentId)}/void`, queryString: { amount: { required: false, validator: numberValidator } } }),
+        updateRecurrentCustomerInfo: (RecurrentPaymentId) => ({ method: 'PUT', url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Customer` }),
+        updateRecurrentEndDate: (RecurrentPaymentId) => ({ method: 'PUT', url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/EndDate` }),
+        updateRecurrentInterval: (RecurrentPaymentId) => ({ method: 'PUT', url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Interval` }),
+        updateRecurrentRecurrencyDay: (RecurrentPaymentId) => ({ method: 'PUT', url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/RecurrencyDay` }),
+        updateRecurrentAmount: (RecurrentPaymentId) => ({ method: 'PUT', url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Amount` }),
+        updateRecurrentNextPaymentDate: (RecurrentPaymentId) => ({ method: 'PUT', url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/NextPaymentDate` }),
+        updateRecurrentPaymentInfo: (RecurrentPaymentId) => ({ method: 'PUT', url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Payment` }),
+        deactivateRecurrency: (RecurrentPaymentId) => ({ method: 'PUT', url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Deactivate` }),
+        reactivateRecurrency: (RecurrentPaymentId) => ({ method: 'PUT', url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Reactivate` }),
         applePay: { method: 'POST', url: '/1/sales/' },
         samsungPay: { method: 'POST', url: '/1/sales/' },
         androidPay: { method: 'POST', url: '/1/sales/' },
@@ -129,44 +129,51 @@ var BrasPag;
         createEletronicTransferTransaction(data, requestId) {
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
+        createBoletoTransaction(data, requestId) {
+            return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
+        }
         createEWalletTransaction(data, requestId) {
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         createVoucherTransaction(data, requestId) {
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
-        capturePaymentTransaction(data, requestId) {
-            return this.__request(this.transactionRequester, endpoints.PagadorClient.capturePaymentTransaction, data, requestId);
+        capturePaymentTransaction(PaymentId, data, requestId) {
+            return this.__request(this.transactionRequester, endpoints.PagadorClient.capturePaymentTransaction(PaymentId), data, requestId);
         }
-        cancelTransaction(data, requestId) {
-            return this.__request(this.transactionRequester, endpoints.PagadorClient.cancelTransaction, data, requestId);
+        cancelTransaction(PaymentId, data, requestId) {
+            return this.__request(this.transactionRequester, endpoints.PagadorClient.cancelTransaction(PaymentId), data, requestId);
         }
-        updateRecurrentCustomerInfo(data, requestId) {
-            return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentCustomerInfo, data, requestId);
+        updateRecurrentCustomerInfo(RecurrentPaymentId, data, requestId) {
+            return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentCustomerInfo(RecurrentPaymentId), data, requestId);
         }
-        updateRecurrentEndDate(data, requestId) {
-            if (typeof data === 'number')
-                data = new Date(data);
-            if (typeof data === 'string')
-                data = new Date(Date.parse(data));
-            //return this.__request<IPagadorClient_UpdateRecurrentCustomerInfoResponse>(this.transactionRequester, endpoints.PagadorClient.updateRecurrentEndDate, data, requestId);
-            return new Promise((resolve, reject) => {
-            });
+        updateRecurrentEndDate(RecurrentPaymentId, EndDate, requestId) {
+            if (typeof EndDate === 'number')
+                EndDate = new Date(EndDate);
+            if (typeof EndDate === 'string')
+                EndDate = new Date(Date.parse(EndDate));
+            return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentEndDate(RecurrentPaymentId), EndDate, requestId);
         }
-        updateRecurrentInterval(data, requestId) {
-            return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentInterval, data, requestId);
+        /**
+         *
+         * @param RecurrentPaymentId
+         * @param Interval 1 = Monthly; 2 = Bimonthly; 3 = Quartermonthly; 6 = Semimonthly; Annually
+         * @param requestId
+         */
+        updateRecurrentInterval(RecurrentPaymentId, Interval, requestId) {
+            return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentInterval(RecurrentPaymentId), Interval, requestId);
         }
-        updateRecurrentRecurrencyDay(data, requestId) {
-            return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentRecurrencyDay, data, requestId);
+        updateRecurrentRecurrencyDay(RecurrentPaymentId, RecurrencyDay, requestId) {
+            return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentRecurrencyDay(RecurrentPaymentId), RecurrencyDay, requestId);
         }
-        updateRecurrentAmount(data, requestId) {
-            return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentAmount, data, requestId);
+        updateRecurrentAmount(RecurrentPaymentId, data, requestId) {
+            return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentAmount(RecurrentPaymentId), data, requestId);
         }
-        updateRecurrentNextPaymentDate(data, requestId) {
-            return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentNextPaymentDate, data, requestId);
+        updateRecurrentNextPaymentDate(RecurrentPaymentId, data, requestId) {
+            return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentNextPaymentDate(RecurrentPaymentId), data, requestId);
         }
-        updateRecurrentPaymentInfo(data, requestId) {
-            return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentPaymentInfo, data, requestId);
+        updateRecurrentPaymentInfo(RecurrentPaymentId, data, requestId) {
+            return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentPaymentInfo(RecurrentPaymentId), data, requestId);
         }
     }
     BrasPag.PagadorClient = PagadorClient;

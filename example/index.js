@@ -18,7 +18,8 @@ process.stdin.on('data', (e) => {
     }
 });
 function createTransactionTask() {
-    client.createTransaction({
+
+    client.createCreditCardTransaction({
         MerchantOrderId: 'teste',
         Customer: {
             Name: 'Comprador de Teste'
@@ -27,12 +28,26 @@ function createTransactionTask() {
             Provider: 'Simulado',
             Type: 'CreditCard',
             Installments: 1,
+            Amount: 10,
+            Authenticate: false,
             CreditCard: {
-                Alias: 'Teste'
             }
         }
     })
         .then(v => console.log('then:', v))
         .catch(e => console.log('catch:', e));
+    client.createRecurrentCreditCardTransaction({
+        MerchantOrderId: 'teste',
+        Customer: {
+            Name: 'Comprador de Teste'
+        },
+        Payment: {
+            Type: 'CreditCard',
+            Recurrent: true,
+        }
+    })
+        .then(v => {
+            console.log('then:',v);
+    })
 }
-createTransactionTask();
+createCreditCardTransactionTask();
