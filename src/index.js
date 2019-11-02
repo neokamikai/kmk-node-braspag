@@ -118,6 +118,12 @@ var BrasPag;
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         createRecurrentCreditCardTransaction(data, requestId) {
+            if (data) {
+                if (data.Payment) {
+                    if (data.Payment.Recurrent !== true)
+                        data.Payment.Recurrent = true;
+                }
+            }
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         createDebitCardTransaction(data, requestId) {

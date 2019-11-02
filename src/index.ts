@@ -18,8 +18,8 @@ const endpoints = {
     Client3DS: { auth: { method: 'POST' as Method, url: '/v2/auth/token' } },
     PagadorClient: {
         createTransaction: { method: 'POST' as Method, url: '/v2/sales/' },
-        capturePaymentTransaction:(PaymentId) => ({ method: 'PUT' as Method, url: `/v2/sales/${encodeURIComponent(PaymentId)}/capture` }),
-        cancelTransaction:(PaymentId) => ({ method: 'PUT' as Method, url: `/v2/sales/${encodeURIComponent(PaymentId)}/void`, queryString: { amount: { required: false, validator: numberValidator } } }),
+        capturePaymentTransaction: (PaymentId) => ({ method: 'PUT' as Method, url: `/v2/sales/${encodeURIComponent(PaymentId)}/capture` }),
+        cancelTransaction: (PaymentId) => ({ method: 'PUT' as Method, url: `/v2/sales/${encodeURIComponent(PaymentId)}/void`, queryString: { amount: { required: false, validator: numberValidator } } }),
         updateRecurrentCustomerInfo: (RecurrentPaymentId) => ({ method: 'PUT' as Method, url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Customer` }),
         updateRecurrentEndDate: (RecurrentPaymentId) => ({ method: 'PUT' as Method, url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/EndDate` }),
         updateRecurrentInterval: (RecurrentPaymentId) => ({ method: 'PUT' as Method, url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Interval` }),
@@ -872,6 +872,11 @@ export namespace BrasPag {
             return this.__request<IPagadorClient_CreateCreditCardTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         public createRecurrentCreditCardTransaction(data: IPagadorClient_CreateRecurrentCreditCardTransactionRequestParameters, requestId?: string) {
+            if (data) {
+                if (data.Payment) {
+                    if (data.Payment.Recurrent !== true) data.Payment.Recurrent = true;
+                }
+            }
             return this.__request<IPagadorClient_CreateRecurrentCreditCardTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         public createDebitCardTransaction(data: IPagadorClient_CreateDebitCardTransactionRequestParameters, requestId?: string) {
@@ -892,10 +897,10 @@ export namespace BrasPag {
         public createVoucherTransaction(data: IPagadorClient_CreateVoucherTransactionRequestParameters, requestId?: string) {
             return this.__request<IPagadorClient_CreateTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
-        public capturePaymentTransaction(PaymentId:string, data: IPagadorClient_PaymentCaptureRequestParameters, requestId?: string) {
+        public capturePaymentTransaction(PaymentId: string, data: IPagadorClient_PaymentCaptureRequestParameters, requestId?: string) {
             return this.__request<IPagadorClient_PaymentCaptureResponse>(this.transactionRequester, endpoints.PagadorClient.capturePaymentTransaction(PaymentId), data, requestId);
         }
-        public cancelTransaction(PaymentId:string, data: IPagadorClient_CancelTransactionRequestParameters, requestId?: string) {
+        public cancelTransaction(PaymentId: string, data: IPagadorClient_CancelTransactionRequestParameters, requestId?: string) {
             return this.__request<IPagadorClient_CancelTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.cancelTransaction(PaymentId), data, requestId);
         }
         public updateRecurrentCustomerInfo(RecurrentPaymentId: string, data: IPagadorClient_UpdateRecurrentCustomerInfoRequestParameters, requestId?: string) {
@@ -918,13 +923,13 @@ export namespace BrasPag {
         public updateRecurrentRecurrencyDay(RecurrentPaymentId: string, RecurrencyDay: number, requestId?: string) {
             return this.__request<boolean>(this.transactionRequester, endpoints.PagadorClient.updateRecurrentRecurrencyDay(RecurrentPaymentId), RecurrencyDay, requestId);
         }
-        public updateRecurrentAmount(RecurrentPaymentId: string,data: number, requestId?: string) {
+        public updateRecurrentAmount(RecurrentPaymentId: string, data: number, requestId?: string) {
             return this.__request<boolean>(this.transactionRequester, endpoints.PagadorClient.updateRecurrentAmount(RecurrentPaymentId), data, requestId);
         }
-        public updateRecurrentNextPaymentDate(RecurrentPaymentId: string,data: string | Date | number, requestId?: string) {
+        public updateRecurrentNextPaymentDate(RecurrentPaymentId: string, data: string | Date | number, requestId?: string) {
             return this.__request<boolean>(this.transactionRequester, endpoints.PagadorClient.updateRecurrentNextPaymentDate(RecurrentPaymentId), data, requestId);
         }
-        public updateRecurrentPaymentInfo(RecurrentPaymentId: string,data: string | Date | number, requestId?: string) {
+        public updateRecurrentPaymentInfo(RecurrentPaymentId: string, data: string | Date | number, requestId?: string) {
             return this.__request<boolean>(this.transactionRequester, endpoints.PagadorClient.updateRecurrentPaymentInfo(RecurrentPaymentId), data, requestId);
         }
 
