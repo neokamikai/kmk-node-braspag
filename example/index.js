@@ -10,7 +10,7 @@ process.stdin.on('data', (e) => {
     switch (s) {
         case 'create-transaction':
             console.log(s);
-            createTransactionTask();
+            createCreditCardTransactionTask();
             break;
 
         default:

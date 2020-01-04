@@ -6,8 +6,9 @@
         "declaration": true,
         "declarationMap": true,
         "target": "es2015",
-        "lib": ["es2019", "scripthost"],
+        "lib": ["es2019", "scripthost", "dom"],
         "alwaysStrict": true,
-		"rootDirs": ["./**"]
+		"rootDirs": ["./**"],
+		"resolveJsonModule": true
     }
 }

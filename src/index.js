@@ -39,6 +39,71 @@ const endpoints = {
         confirmTransaction: { method: 'POST', url: '/v2/sales/{PaymentId}/confirm' },
     }
 };
+exports.TestCreditCard = {
+    /*
+Não Autorizado	0000.0000.0000.0002	05	Não Autorizada
+Autorização Aleatória	0000.0000.0000.0009	4 / 99	Operation Successful / Time Out
+Não Autorizado	0000.0000.0000.0007	77	Cartão Cancelado
+Não Autorizado	0000.0000.0000.0008	70	Problemas com o Cartão de Crédito
+Não Autorizado	0000.0000.0000.0005	78	Cartão Bloqueado
+Não Autorizado	0000.0000.0000.0003	57	Cartão Expirado
+Não Autorizado	0000.0000.0000.0006	99	Time Out
+     */
+    /**
+     * Código de Retorno: 4
+     *
+     * Mensagem de Retorno: Operação realizada com sucesso
+    */
+    Autorizado1: '0000000000000001',
+    /**
+     * Código de Retorno: 4
+     *
+     * Mensagem de Retorno: Operação realizada com sucesso
+    */
+    Autorizado2: '0000000000000004',
+    /**
+     * Código de Retorno: 4 / 99
+     *
+     * Mensagem de Retorno: Operation Successful / Time Out
+     */
+    AutorizacaoAleatoria: '0000000000000009',
+    /**
+     * Código de Retorno: 05
+     *
+     * Mensagem de Retorno: Não Autorizada
+     */
+    NaoAutorizado1: '0000000000000002',
+    /**
+     * Código de Retorno: 77
+     *
+     * Mensagem de Retorno: Cartão Cancelado
+     */
+    NaoAutorizado2: '0000000000000007',
+    /**
+     * Código de Retorno: 70
+     *
+     * Mensagem de Retorno: Problemas com o Cartão de Crédito
+     */
+    NaoAutorizado3: '0000000000000008',
+    /**
+     * Código de Retorno: 78
+     *
+     * Mensagem de Retorno: Cartão Bloqueado
+     */
+    NaoAutorizado4: '0000000000000005',
+    /**
+     * Código de Retorno: 57
+     *
+     * Mensagem de Retorno: Cartão Expirado
+     */
+    NaoAutorizado5: '0000000000000003',
+    /**
+     * Código de Retorno: 99
+     *
+     * Mensagem de Retorno: Time Out
+     */
+    NaoAutorizado6: '0000000000000006',
+};
 function numberValidator(value) {
 }
 function toBraspagDateString(value) {
@@ -71,6 +136,7 @@ var BrasPag;
     BrasPag.Client3DS = Client3DS;
     class PagadorClient {
         constructor(parameters) {
+            this.environment = parameters.environment;
             this.transactionRequester = axios_1.default.create({
                 baseURL: baseUrl.PagadorClient[parameters.environment].transaction,
                 headers: {
@@ -112,9 +178,23 @@ var BrasPag;
             });
         }
         createTransaction(data, requestId) {
+            if (this.environment === 'sandbox' && data.Payment)
+                data.Payment.Provider = 'Simulado';
+            if (data.Payment) {
+                if (typeof data.Payment.Amount === 'number') {
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2)) * 100;
+                }
+            }
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         createCreditCardTransaction(data, requestId) {
+            if (this.environment === 'sandbox' && data.Payment)
+                data.Payment.Provider = 'Simulado';
+            if (data.Payment) {
+                if (typeof data.Payment.Amount === 'number') {
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2)) * 100;
+                }
+            }
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         createRecurrentCreditCardTransaction(data, requestId) {
@@ -123,25 +203,53 @@ var BrasPag;
                     if (data.Payment.Recurrent !== true)
                         data.Payment.Recurrent = true;
                 }
+                if (typeof data.Payment.Amount === 'number') {
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2)) * 100;
+                }
             }
+            if (this.environment === 'sandbox' && data.Payment)
+                data.Payment.Provider = 'Simulado';
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         createDebitCardTransaction(data, requestId) {
+            if (this.environment === 'sandbox' && data.Payment)
+                data.Payment.Provider = 'Simulado';
+            if (data.Payment) {
+                if (typeof data.Payment.Amount === 'number') {
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2)) * 100;
+                }
+            }
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         createRecurrentDebitCardTransaction(data, requestId) {
+            //if(this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
+            if (data.Payment) {
+                if (typeof data.Payment.Amount === 'number') {
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2)) * 100;
+                }
+            }
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         createEletronicTransferTransaction(data, requestId) {
+            //if(this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
+            if (data.Payment) {
+                if (typeof data.Payment.Amount === 'number') {
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2)) * 100;
+                }
+            }
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         createBoletoTransaction(data, requestId) {
+            if (this.environment === 'sandbox' && data.Payment)
+                data.Payment.Provider = 'Simulado';
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         createEWalletTransaction(data, requestId) {
+            //if(this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         createVoucherTransaction(data, requestId) {
+            //if(this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
             return this.__request(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         capturePaymentTransaction(PaymentId, data, requestId) {

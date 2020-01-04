@@ -1,6 +1,6 @@
 {
   "name": "kmk-node-braspag",
-  "version": "0.0.1",
+  "version": "0.0.19",
   "description": "",
   "main": "index.js",
   "scripts": {

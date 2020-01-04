@@ -1,3 +1,59 @@
+export declare const TestCreditCard: {
+    /**
+     * Código de Retorno: 4
+     *
+     * Mensagem de Retorno: Operação realizada com sucesso
+    */
+    Autorizado1: string;
+    /**
+     * Código de Retorno: 4
+     *
+     * Mensagem de Retorno: Operação realizada com sucesso
+    */
+    Autorizado2: string;
+    /**
+     * Código de Retorno: 4 / 99
+     *
+     * Mensagem de Retorno: Operation Successful / Time Out
+     */
+    AutorizacaoAleatoria: string;
+    /**
+     * Código de Retorno: 05
+     *
+     * Mensagem de Retorno: Não Autorizada
+     */
+    NaoAutorizado1: string;
+    /**
+     * Código de Retorno: 77
+     *
+     * Mensagem de Retorno: Cartão Cancelado
+     */
+    NaoAutorizado2: string;
+    /**
+     * Código de Retorno: 70
+     *
+     * Mensagem de Retorno: Problemas com o Cartão de Crédito
+     */
+    NaoAutorizado3: string;
+    /**
+     * Código de Retorno: 78
+     *
+     * Mensagem de Retorno: Cartão Bloqueado
+     */
+    NaoAutorizado4: string;
+    /**
+     * Código de Retorno: 57
+     *
+     * Mensagem de Retorno: Cartão Expirado
+     */
+    NaoAutorizado5: string;
+    /**
+     * Código de Retorno: 99
+     *
+     * Mensagem de Retorno: Time Out
+     */
+    NaoAutorizado6: string;
+};
 export declare namespace BrasPag {
     export type BraspagEnvironment = 'sandbox' | 'production';
     export interface IParametersClient3DS {
@@ -84,7 +140,11 @@ export declare namespace BrasPag {
         Name: string;
         Value: string;
     }
-    export type CreditCardProvider = string;
+    export type CreditCardProvider = string | "Simulado" | "Cielo" | "Cielo30" | "Redecard" | "Rede" | "Rede2" | "Getnet" | "GlobalPayments" | "Stone" | "FirstData" | "Sub1" | "Banorte" | "Credibanco" | "Transbank" | "RedeSitef" | "CieloSitef" | "SantanderSitef" | "DMCard";
+    export type DebitCardProvider = "Cielo" | "Cielo30" | "Getnet" | "FirstData" | "GlobalPayments";
+    export type VoucherProvider = "Alelo";
+    export type VerifyCardZeroAuthProvider = "Simulado" | "Cielo30" | "Rede2" | "Getnet" | "FirstData" | "GlobalPayments";
+    export type VerifyCardConsultaBINProvider = "Simulado" | "Cielo30";
     export type TransactionRequestType = "CreditCard" | "DebitCard" | "Boleto" | "EletronicTransfer";
     export type BoletoProvider = "Bradesco2" | "BancoDoBrasil2" | "ItauShopline" | "Itau2" | "Santander2" | "Caixa2" | "CitiBank2" | "BankOfAmerica";
     export type TransferenciaEletronicaProvider = "Bradesco" | "BancoDoBrasil" | "SafetyPay" | "Itau";
@@ -159,21 +219,20 @@ export declare namespace BrasPag {
         /**
          * Booleano que indica se a transação será dividida entre várias contas (true) ou não (false)
          */
-        DoSplit: boolean;
+        DoSplit?: boolean;
         /**
          * Lista de Campos Extras
          */
-        ExtraDataCollection: Array<ExtraData>;
+        ExtraDataCollection?: Array<ExtraData>;
         /**
          *
          */
-        CreditCard: CreditCard;
+        CreditCard?: CreditCard;
         /**
          *
          */
-        Credentials: PaymentCredentials;
+        Credentials?: PaymentCredentials;
     }
-    export type DebitCardProvider = 'Cielo';
     export interface DebitCardPaymentRequest extends PaymentRequestBase, PaymentDefaultAuthentication {
         Provider: DebitCardProvider;
         Installments: number;
@@ -228,7 +287,69 @@ export declare namespace BrasPag {
     export interface RecurrentPaymentRequest {
         Recurrent: true;
     }
-    export interface RecurrentCreditCardPaymentRequest extends PaymentRequestBase, RecurrentPaymentRequest {
+    export interface RecurrentCreditCardPaymentRequest extends PaymentRequestBase {
+        /**
+        * Nome da provedora de Meio de Pagamento
+        */
+        Provider: CreditCardProvider;
+        /**
+         * Tipo do Meio de Pagamento
+         */
+        Type: "CreditCard";
+        /**
+         * Aplicável apenas para empresas aéreas. Montante do valor da autorização que deve ser destinado à taxa de serviço.
+         *
+         * Obs.: Esse valor não é adicionado ao valor da autorização
+         */
+        ServiceTaxAmount?: number;
+        /**
+         * Moeda na qual o pagamento será feito (BRL / USD / MXN / COP / CLP / ARS / PEN / EUR / PYN / UYU / VEB / VEF / GBP)
+         */
+        Currency?: Moeda;
+        /**
+         * País na qual o pagamento será feito
+         */
+        Country?: string;
+        Installments: 1;
+        /**
+         * Booleano que indica se a autorização deve ser com captura automática (true) ou não (false).
+         *
+         * Deverá verificar junto à adquirente a disponibilidade desta funcionalidade
+         */
+        Capture?: boolean;
+        /**
+         * Booleano que indica se a transação deve ser autenticada (true) ou não (false).
+         *
+         * Deverá verificar junto à adquirente a disponibilidade desta funcionalidade
+         */
+        Authenticate?: false;
+        /**
+         * Booleano que indica se a transação é do tipo recorrente (true) ou não (false).
+         *
+         * Este com valor true não originará uma nova Recorrência, apenas permitirá a realização de uma transação sem a necessidade de envio do CVV.
+         *
+         * Somente para transações Cielo.
+         *
+         * Authenticate deve ser false quando Recurrent é true
+         */
+        Recurrent: true;
+        RecurrentPayment: RecurrentPayment;
+        /**
+         * Texto que será impresso na fatura do portador
+         */
+        SoftDescriptor?: string;
+        /**
+         * Lista de Campos Extras
+         */
+        ExtraDataCollection?: Array<ExtraData>;
+        /**
+         *
+         */
+        CreditCard: CreditCard;
+        /**
+         *
+         */
+        Credentials?: PaymentCredentials;
     }
     export interface RecurrentDebitCardPaymentRequest extends PaymentRequestBase {
     }
@@ -250,9 +371,9 @@ export declare namespace BrasPag {
         SoftDescriptor: string;
         DoSplit: boolean;
         CreditCard?: CreditCard;
-        DebitCard: DebitCard;
-        Credentials: PaymentCredentials;
-        ExtraDataCollection: Array<ExtraData>;
+        DebitCard?: DebitCard;
+        Credentials?: PaymentCredentials;
+        ExtraDataCollection?: Array<ExtraData>;
         ExternalAuthentication?: ExternalAuthentication;
         RecurrentPayment: RecurrentPaymentRequest;
     }
@@ -262,8 +383,8 @@ export declare namespace BrasPag {
         ExpirationDate: string;
         SecurityCode: string;
         Brand: string;
-        SaveCard: boolean;
-        Alias: string;
+        SaveCard?: boolean;
+        Alias?: string;
     }
     export interface DebitCard {
         /**
@@ -308,7 +429,6 @@ export declare namespace BrasPag {
         Brand: string;
     }
     interface IPagadorClient_CreateTransactionRequestBase<TPaymentRequest> {
-        RequestId: string;
         /**
          * Required!
          */
@@ -416,7 +536,7 @@ export declare namespace BrasPag {
         /**
          * 	Código de retorno da Operação	Texto	32	Texto alfanumérico
          */
-        ReasonCode: string;
+        ReasonCode: number;
         /**
          * 	Mensagem de retorno da Operação	Texto	512	Texto alfanumérico
          */
@@ -424,7 +544,7 @@ export declare namespace BrasPag {
         /**
          * 	Status da Transação	Byte	2	Ex. 1
          */
-        Status: string;
+        Status: number;
         /**
          * 	Código retornado pelo provedor do meio de pagamento(adquirente e bancos)	Texto	32	57
          */
@@ -433,6 +553,9 @@ export declare namespace BrasPag {
          * 	Mensagem retornada pelo provedor do meio de pagamento(adquirente e bancos)	Texto	512	Transação Aprovada
          */
         ProviderReturnMessage: string;
+    }
+    export interface RecurrentCreditCardPaymentResponse extends CreditCardPaymentResponse {
+        RecurrentPayment: RecurrentPaymentResponse;
     }
     export interface DebitCardPaymentResponse extends PaymentResponseBase {
     }
@@ -479,7 +602,7 @@ export declare namespace BrasPag {
         Recurrent: boolean;
         DoSplit: boolean;
         CreditCard: CreditCard;
-        Credentials: PaymentCredentials;
+        Credentials?: PaymentCredentials;
         ProofOfSale: string;
         AcquirerTransactionId: string;
         AuthorizationCode: string;
@@ -514,9 +637,9 @@ export declare namespace BrasPag {
         RejectReasons: Array<VelocityAnalysisRejectReason>;
     }
     export type RecurrentPaymentInterval = "Monthly" | "Bimonthly" | "Quarterly" | "SemiAnnual" | "Annual";
-    export interface RecurrentPaymentRequest {
-        AuthorizeNow: string;
-        EndDate: string;
+    export interface RecurrentPayment {
+        AuthorizeNow: boolean;
+        EndDate?: string;
         /**
          * Default: Monthly
          */
@@ -525,11 +648,19 @@ export declare namespace BrasPag {
     }
     export interface IPagadorClient_CreateBoletoTransactionResponse {
     }
-    export interface IPagadorClient_CreateCreditCardTransactionResponse extends CreditCardPaymentResponse {
-        VelocityAnalysis?: VelocityAnalysisResult;
+    export interface IPagadorClient_CreateCreditCardTransactionResponse {
+        MerchantOrderId: string;
+        Customer: Customer;
+        Payment: CreditCardPaymentResponse & {
+            VelocityAnalysis?: VelocityAnalysisResult;
+        };
     }
-    export interface IPagadorClient_CreateRecurrentCreditCardTransactionResponse extends CreditCardPaymentResponse {
-        VelocityAnalysis?: VelocityAnalysisResult;
+    export interface IPagadorClient_CreateRecurrentCreditCardTransactionResponse {
+        MerchantOrderId: string;
+        Customer: Customer;
+        Payment: RecurrentCreditCardPaymentResponse & {
+            VelocityAnalysis?: VelocityAnalysisResult;
+        };
     }
     export interface IPagadorClient_CreateDebitCardTransactionResponse {
         /**
@@ -591,7 +722,7 @@ export declare namespace BrasPag {
          *
          * Texto alfanumérico
          */
-        ReasonCode: string;
+        ReasonCode: number;
         /**
          * 	Mensagem de retorno da Operação
          *
@@ -611,7 +742,7 @@ export declare namespace BrasPag {
          *
          * Ex. 1
          */
-        Status: string;
+        Status: number;
         /**
          * 	Código retornado pelo provedor do meio de pagamento(adquirente e bancos)
          *
@@ -654,7 +785,7 @@ export declare namespace BrasPag {
         CapturedDate: string;
         CapturedAmount: number;
         ECI: string;
-        ReasonCode: string;
+        ReasonCode: number;
         ReasonMessage: string;
         Status: number;
         ProviderReturnCode: string;
@@ -686,7 +817,7 @@ export declare namespace BrasPag {
     }
     export interface IPagadorClient_PaymentCaptureResponse {
         Status: number;
-        ReasonCode: string;
+        ReasonCode: number;
         ReasonMessage: string;
         ProviderReasonCode?: string;
         ProviderReasonMessage?: string;
@@ -697,11 +828,13 @@ export declare namespace BrasPag {
     }
     export interface IPagadorClient_CancelTransactionResponse {
         Status: number;
-        ReasonCode: string;
+        ReasonCode: number;
         ReasonMessage: string;
-        ProviderReasonCode: string;
+        ProviderReasonCode: number;
         ProviderReasonMessage: string;
         Links: Array<BrasPagLink>;
+    }
+    export interface IPagadorClient_UpdateRecurrentPaymentInfoRequestParameters extends RecurrentCreditCardPaymentRequest {
     }
     export interface IPagadorClient_UpdateRecurrentCustomerInfoRequestParameters extends Customer {
     }
@@ -722,32 +855,33 @@ export declare namespace BrasPag {
     export class PagadorClient {
         private transactionRequester;
         private retrievalRequester;
+        private environment;
         constructor(parameters: IParametersPagadorClient);
         private __request;
-        createTransaction(data: IPagadorClient_CreateTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateTransactionResponse | IPagadorClient_RequestFailureResponse>;
-        createCreditCardTransaction(data: IPagadorClient_CreateCreditCardTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateCreditCardTransactionResponse | IPagadorClient_RequestFailureResponse>;
-        createRecurrentCreditCardTransaction(data: IPagadorClient_CreateRecurrentCreditCardTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateRecurrentCreditCardTransactionResponse | IPagadorClient_RequestFailureResponse>;
-        createDebitCardTransaction(data: IPagadorClient_CreateDebitCardTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateDebitCardTransactionResponse | IPagadorClient_RequestFailureResponse>;
-        createRecurrentDebitCardTransaction(data: IPagadorClient_CreateRecurrentDebitTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_RequestFailureResponse | IPagadorClient_CreateRecurrentDebitCardTransactionResponse>;
-        createEletronicTransferTransaction(data: IPagadorClient_CreateEletronicTransferTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateTransactionResponse | IPagadorClient_RequestFailureResponse>;
-        createBoletoTransaction(data: IPagadorClient_CreateBoletoTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateBoletoTransactionResponse | IPagadorClient_RequestFailureResponse>;
-        createEWalletTransaction(data: IPagadorClient_CreateEWalletTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateTransactionResponse | IPagadorClient_RequestFailureResponse>;
-        createVoucherTransaction(data: IPagadorClient_CreateVoucherTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateTransactionResponse | IPagadorClient_RequestFailureResponse>;
-        capturePaymentTransaction(PaymentId: string, data: IPagadorClient_PaymentCaptureRequestParameters, requestId?: string): Promise<IPagadorClient_PaymentCaptureResponse | IPagadorClient_RequestFailureResponse>;
-        cancelTransaction(PaymentId: string, data: IPagadorClient_CancelTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CancelTransactionResponse | IPagadorClient_RequestFailureResponse>;
-        updateRecurrentCustomerInfo(RecurrentPaymentId: string, data: IPagadorClient_UpdateRecurrentCustomerInfoRequestParameters, requestId?: string): Promise<IPagadorClient_UpdateRecurrentCustomerInfoResponse | IPagadorClient_RequestFailureResponse>;
-        updateRecurrentEndDate(RecurrentPaymentId: string, EndDate: string | Date | number, requestId?: string): Promise<IPagadorClient_UpdateRecurrentCustomerInfoResponse | IPagadorClient_RequestFailureResponse>;
+        createTransaction(data: IPagadorClient_CreateTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateTransactionResponse & IPagadorClient_RequestFailureResponse>;
+        createCreditCardTransaction(data: IPagadorClient_CreateCreditCardTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateCreditCardTransactionResponse & IPagadorClient_RequestFailureResponse & IPagadorClient_RequestFailureError>;
+        createRecurrentCreditCardTransaction(data: IPagadorClient_CreateRecurrentCreditCardTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateRecurrentCreditCardTransactionResponse & IPagadorClient_RequestFailureResponse>;
+        createDebitCardTransaction(data: IPagadorClient_CreateDebitCardTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateDebitCardTransactionResponse & IPagadorClient_RequestFailureResponse>;
+        createRecurrentDebitCardTransaction(data: IPagadorClient_CreateRecurrentDebitTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateDebitCardTransactionResponse & RecurrentPaymentResponse & IPagadorClient_RequestFailureResponse>;
+        createEletronicTransferTransaction(data: IPagadorClient_CreateEletronicTransferTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateTransactionResponse & IPagadorClient_RequestFailureResponse>;
+        createBoletoTransaction(data: IPagadorClient_CreateBoletoTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateBoletoTransactionResponse & IPagadorClient_RequestFailureResponse>;
+        createEWalletTransaction(data: IPagadorClient_CreateEWalletTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateTransactionResponse & IPagadorClient_RequestFailureResponse>;
+        createVoucherTransaction(data: IPagadorClient_CreateVoucherTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CreateTransactionResponse & IPagadorClient_RequestFailureResponse>;
+        capturePaymentTransaction(PaymentId: string, data: IPagadorClient_PaymentCaptureRequestParameters, requestId?: string): Promise<IPagadorClient_PaymentCaptureResponse & IPagadorClient_RequestFailureResponse>;
+        cancelTransaction(PaymentId: string, data: IPagadorClient_CancelTransactionRequestParameters, requestId?: string): Promise<IPagadorClient_CancelTransactionResponse & IPagadorClient_RequestFailureResponse>;
+        updateRecurrentCustomerInfo(RecurrentPaymentId: string, data: IPagadorClient_UpdateRecurrentCustomerInfoRequestParameters, requestId?: string): Promise<IPagadorClient_UpdateRecurrentCustomerInfoResponse & IPagadorClient_RequestFailureResponse>;
+        updateRecurrentEndDate(RecurrentPaymentId: string, EndDate: string | Date | number, requestId?: string): Promise<IPagadorClient_UpdateRecurrentCustomerInfoResponse & IPagadorClient_RequestFailureResponse>;
         /**
          *
          * @param RecurrentPaymentId
          * @param Interval 1 = Monthly; 2 = Bimonthly; 3 = Quartermonthly; 6 = Semimonthly; Annually
          * @param requestId
          */
-        updateRecurrentInterval(RecurrentPaymentId: string, Interval: 1 | 2 | 3 | 6 | 12, requestId?: string): Promise<boolean | IPagadorClient_RequestFailureResponse>;
-        updateRecurrentRecurrencyDay(RecurrentPaymentId: string, RecurrencyDay: number, requestId?: string): Promise<boolean | IPagadorClient_RequestFailureResponse>;
-        updateRecurrentAmount(RecurrentPaymentId: string, data: number, requestId?: string): Promise<boolean | IPagadorClient_RequestFailureResponse>;
-        updateRecurrentNextPaymentDate(RecurrentPaymentId: string, data: string | Date | number, requestId?: string): Promise<boolean | IPagadorClient_RequestFailureResponse>;
-        updateRecurrentPaymentInfo(RecurrentPaymentId: string, data: string | Date | number, requestId?: string): Promise<boolean | IPagadorClient_RequestFailureResponse>;
+        updateRecurrentInterval(RecurrentPaymentId: string, Interval: 1 | 2 | 3 | 6 | 12, requestId?: string): Promise<(false & IPagadorClient_RequestFailureResponse) | (true & IPagadorClient_RequestFailureResponse)>;
+        updateRecurrentRecurrencyDay(RecurrentPaymentId: string, RecurrencyDay: number, requestId?: string): Promise<(false & IPagadorClient_RequestFailureResponse) | (true & IPagadorClient_RequestFailureResponse)>;
+        updateRecurrentAmount(RecurrentPaymentId: string, data: number, requestId?: string): Promise<(false & IPagadorClient_RequestFailureResponse) | (true & IPagadorClient_RequestFailureResponse)>;
+        updateRecurrentNextPaymentDate(RecurrentPaymentId: string, data: string | Date | number, requestId?: string): Promise<(false & IPagadorClient_RequestFailureResponse) | (true & IPagadorClient_RequestFailureResponse)>;
+        updateRecurrentPaymentInfo(RecurrentPaymentId: string, data: IPagadorClient_UpdateRecurrentPaymentInfoRequestParameters, requestId?: string): Promise<(false & IPagadorClient_RequestFailureResponse) | (true & IPagadorClient_RequestFailureResponse)>;
     }
     export {};
 }

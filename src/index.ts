@@ -1,3 +1,4 @@
+
 const baseUrl = {
     Client3DS: {
         sandbox: 'https://mpisandbox.braspag.com.br',
@@ -38,6 +39,71 @@ const endpoints = {
 
     }
 }
+export const TestCreditCard = {
+	/*
+Não Autorizado	0000.0000.0000.0002	05	Não Autorizada
+Autorização Aleatória	0000.0000.0000.0009	4 / 99	Operation Successful / Time Out
+Não Autorizado	0000.0000.0000.0007	77	Cartão Cancelado
+Não Autorizado	0000.0000.0000.0008	70	Problemas com o Cartão de Crédito
+Não Autorizado	0000.0000.0000.0005	78	Cartão Bloqueado
+Não Autorizado	0000.0000.0000.0003	57	Cartão Expirado
+Não Autorizado	0000.0000.0000.0006	99	Time Out
+	 */
+	/**
+	 * Código de Retorno: 4
+	 *
+	 * Mensagem de Retorno: Operação realizada com sucesso
+	*/
+    Autorizado1: '0000000000000001',
+	/**
+	 * Código de Retorno: 4
+	 *
+	 * Mensagem de Retorno: Operação realizada com sucesso
+	*/
+    Autorizado2: '0000000000000004',
+	/**
+	 * Código de Retorno: 4 / 99
+	 *
+	 * Mensagem de Retorno: Operation Successful / Time Out
+	 */
+    AutorizacaoAleatoria: '0000000000000009',
+	/**
+	 * Código de Retorno: 05
+	 *
+	 * Mensagem de Retorno: Não Autorizada
+	 */
+    NaoAutorizado1: '0000000000000002',
+	/**
+	 * Código de Retorno: 77
+	 *
+	 * Mensagem de Retorno: Cartão Cancelado
+	 */
+    NaoAutorizado2: '0000000000000007',
+	/**
+	 * Código de Retorno: 70
+	 *
+	 * Mensagem de Retorno: Problemas com o Cartão de Crédito
+	 */
+    NaoAutorizado3: '0000000000000008',
+	/**
+	 * Código de Retorno: 78
+	 *
+	 * Mensagem de Retorno: Cartão Bloqueado
+	 */
+    NaoAutorizado4: '0000000000000005',
+	/**
+	 * Código de Retorno: 57
+	 *
+	 * Mensagem de Retorno: Cartão Expirado
+	 */
+    NaoAutorizado5: '0000000000000003',
+	/**
+	 * Código de Retorno: 99
+	 *
+	 * Mensagem de Retorno: Time Out
+	 */
+    NaoAutorizado6: '0000000000000006',
+}
 function numberValidator(value: any) {
 
 }
@@ -68,36 +134,36 @@ export namespace BrasPag {
 
     }
     /**
-         * 
+         *
          * @property EstablishmentCode   Código do Estabelecimento do Cielo E-Commerce 3.0	Numérico
-         * 
+         *
          * [10 posições]
-         *         
-         * @property MerchantName	Nome do estabelecimento registrado na Cielo	Alfanumérico 
-         * 
+         *
+         * @property MerchantName	Nome do estabelecimento registrado na Cielo	Alfanumérico
+         *
          * [até 25 posições]
-         * 
-         * @property MCC	Código de Categoria do estabelecimento	Numérico 
-         * 
+         *
+         * @property MCC	Código de Categoria do estabelecimento	Numérico
+         *
          * [4 posições]
          */
     export interface IClient3DS_AuthRequestParameters {
 
         /**
          * EstablishmentCode	Código do Estabelecimento do Cielo E-Commerce 3.0
-         * 
+         *
          * Numérico [10 posições]
          */
         EstablishmentCode: string | number;
         /**
-         * MerchantName	Nome do estabelecimento registrado na Cielo	Alfanumérico 
-         * 
+         * MerchantName	Nome do estabelecimento registrado na Cielo	Alfanumérico
+         *
          * [até 25 posições]
          */
         MerchantName: string;
         /**
          * Código de Categoria do estabelecimento
-         * 
+         *
          * Numérico [4 posições]
          */
         MCC: string | number;
@@ -142,7 +208,11 @@ export namespace BrasPag {
         Name: string;
         Value: string;
     }
-    export type CreditCardProvider = string;
+    export type CreditCardProvider = string | "Simulado" | "Cielo" | "Cielo30" | "Redecard" | "Rede" | "Rede2" | "Getnet" | "GlobalPayments" | "Stone" | "FirstData" | "Sub1" | "Banorte" | "Credibanco" | "Transbank" | "RedeSitef" | "CieloSitef" | "SantanderSitef" | "DMCard";
+    export type DebitCardProvider = "Cielo" | "Cielo30" | "Getnet" | "FirstData" | "GlobalPayments";
+    export type VoucherProvider = "Alelo";
+    export type VerifyCardZeroAuthProvider = "Simulado" | "Cielo30" | "Rede2" | "Getnet" | "FirstData" | "GlobalPayments";
+    export type VerifyCardConsultaBINProvider = "Simulado" | "Cielo30";
     export type TransactionRequestType = "CreditCard" | "DebitCard" | "Boleto" | "EletronicTransfer";
     export type BoletoProvider = "Bradesco2" | "BancoDoBrasil2" | "ItauShopline" | "Itau2" | "Santander2" | "Caixa2" | "CitiBank2" | "BankOfAmerica";
     export type TransferenciaEletronicaProvider = "Bradesco" | "BancoDoBrasil" | "SafetyPay" | "Itau";
@@ -150,7 +220,7 @@ export namespace BrasPag {
     export type Interest = "ByMerchant" | "ByIssuer";
     export interface PaymentRequestBase {
         /**
-         * 
+         *
          */
         //Provider: string;
         Type: TransactionRequestType;
@@ -170,8 +240,8 @@ export namespace BrasPag {
          */
         Type: "CreditCard";
         /**
-         * Aplicável apenas para empresas aéreas. Montante do valor da autorização que deve ser destinado à taxa de serviço. 
-         * 
+         * Aplicável apenas para empresas aéreas. Montante do valor da autorização que deve ser destinado à taxa de serviço.
+         *
          * Obs.: Esse valor não é adicionado ao valor da autorização
          */
         ServiceTaxAmount?: number;
@@ -192,24 +262,24 @@ export namespace BrasPag {
          */
         Interest?: Interest;
         /**
-         * Booleano que indica se a autorização deve ser com captura automática (true) ou não (false). 
-         * 
+         * Booleano que indica se a autorização deve ser com captura automática (true) ou não (false).
+         *
          * Deverá verificar junto à adquirente a disponibilidade desta funcionalidade
          */
         Capture?: boolean;
         /**
-         * Booleano que indica se a transação deve ser autenticada (true) ou não (false). 
-         * 
+         * Booleano que indica se a transação deve ser autenticada (true) ou não (false).
+         *
          * Deverá verificar junto à adquirente a disponibilidade desta funcionalidade
          */
         Authenticate?: boolean;
         /**
-         * Booleano que indica se a transação é do tipo recorrente (true) ou não (false). 
-         * 
-         * Este com valor true não originará uma nova Recorrência, apenas permitirá a realização de uma transação sem a necessidade de envio do CVV. 
-         * 
-         * Somente para transações Cielo. 
-         * 
+         * Booleano que indica se a transação é do tipo recorrente (true) ou não (false).
+         *
+         * Este com valor true não originará uma nova Recorrência, apenas permitirá a realização de uma transação sem a necessidade de envio do CVV.
+         *
+         * Somente para transações Cielo.
+         *
          * Authenticate deve ser false quando Recurrent é true
          */
         //Recurrent?: boolean;
@@ -220,21 +290,21 @@ export namespace BrasPag {
         /**
          * Booleano que indica se a transação será dividida entre várias contas (true) ou não (false)
          */
-        DoSplit: boolean;
+        DoSplit?: boolean;
         /**
          * Lista de Campos Extras
          */
-        ExtraDataCollection: Array<ExtraData>;
+        ExtraDataCollection?: Array<ExtraData>;
         /**
-         * 
+         *
          */
-        CreditCard: CreditCard;
+        CreditCard?: CreditCard;
         /**
-         * 
+         *
          */
-        Credentials: PaymentCredentials;
+        Credentials?: PaymentCredentials;
     }
-    export type DebitCardProvider = 'Cielo';
+
     export interface DebitCardPaymentRequest extends PaymentRequestBase, PaymentDefaultAuthentication {
         Provider: DebitCardProvider;
         Installments: number;
@@ -290,8 +360,69 @@ export namespace BrasPag {
     export interface RecurrentPaymentRequest {
         Recurrent: true
     }
-    export interface RecurrentCreditCardPaymentRequest extends PaymentRequestBase, RecurrentPaymentRequest {
-
+    export interface RecurrentCreditCardPaymentRequest extends PaymentRequestBase {
+        /**
+        * Nome da provedora de Meio de Pagamento
+        */
+        Provider: CreditCardProvider;
+        /**
+         * Tipo do Meio de Pagamento
+         */
+        Type: "CreditCard";
+        /**
+         * Aplicável apenas para empresas aéreas. Montante do valor da autorização que deve ser destinado à taxa de serviço.
+         *
+         * Obs.: Esse valor não é adicionado ao valor da autorização
+         */
+        ServiceTaxAmount?: number;
+        /**
+         * Moeda na qual o pagamento será feito (BRL / USD / MXN / COP / CLP / ARS / PEN / EUR / PYN / UYU / VEB / VEF / GBP)
+         */
+        Currency?: Moeda;
+        /**
+         * País na qual o pagamento será feito
+         */
+        Country?: string;
+        Installments: 1;
+        /**
+         * Booleano que indica se a autorização deve ser com captura automática (true) ou não (false).
+         *
+         * Deverá verificar junto à adquirente a disponibilidade desta funcionalidade
+         */
+        Capture?: boolean;
+        /**
+         * Booleano que indica se a transação deve ser autenticada (true) ou não (false).
+         *
+         * Deverá verificar junto à adquirente a disponibilidade desta funcionalidade
+         */
+        Authenticate?: false;
+        /**
+         * Booleano que indica se a transação é do tipo recorrente (true) ou não (false).
+         *
+         * Este com valor true não originará uma nova Recorrência, apenas permitirá a realização de uma transação sem a necessidade de envio do CVV.
+         *
+         * Somente para transações Cielo.
+         *
+         * Authenticate deve ser false quando Recurrent é true
+         */
+        Recurrent: true;
+        RecurrentPayment: RecurrentPayment;
+        /**
+         * Texto que será impresso na fatura do portador
+         */
+        SoftDescriptor?: string;
+        /**
+         * Lista de Campos Extras
+         */
+        ExtraDataCollection?: Array<ExtraData>;
+        /**
+         *
+         */
+        CreditCard: CreditCard;
+        /**
+         *
+         */
+        Credentials?: PaymentCredentials;
     }
     export interface RecurrentDebitCardPaymentRequest extends PaymentRequestBase {
 
@@ -317,9 +448,9 @@ export namespace BrasPag {
         SoftDescriptor: string;
         DoSplit: boolean;
         CreditCard?: CreditCard;
-        DebitCard: DebitCard;
-        Credentials: PaymentCredentials;
-        ExtraDataCollection: Array<ExtraData>;
+        DebitCard?: DebitCard;
+        Credentials?: PaymentCredentials;
+        ExtraDataCollection?: Array<ExtraData>;
         ExternalAuthentication?: ExternalAuthentication;
 
 
@@ -331,54 +462,52 @@ export namespace BrasPag {
         ExpirationDate: string;
         SecurityCode: string;
         Brand: string;
-        SaveCard: boolean;
-        Alias: string;
+        SaveCard?: boolean;
+        Alias?: string;
     }
     export interface DebitCard {
         /**
          * Max Length: 16
-         * 
+         *
          * Required: Yes
-         * 
+         *
          * Número do Cartão do comprador
          */
         CardNumber: string;
         /**
          * Max Length: 25
-         * 
+         *
          * Required: Yes
-         * 
+         *
          * Nome do Comprador impresso no cartão
          */
         Holder: string;
         /**
          * Max Length: 7
-         * 
+         *
          * Required: Yes
-         * 
+         *
          * Data de validade impresso no cartão, no formato MM/AAAA
          */
         ExpirationDate: string;
         /**
          * Max Length: 4
-         * 
+         *
          * Required: Yes
-         * 
+         *
          * Código de segurança impresso no verso do cartão
          */
         SecurityCode: string;
         /**
          * Max Length: 10
-         * 
+         *
          * Required: Yes
-         * 
+         *
          * Bandeira do cartão
          */
         Brand: string;
     }
     interface IPagadorClient_CreateTransactionRequestBase<TPaymentRequest> {
-
-        RequestId: string;
         /**
          * Required!
          */
@@ -415,7 +544,8 @@ export namespace BrasPag {
         > {
 
     }
-    export interface IPagadorClient_CreateRecurrentCreditCardTransactionRequestParameters extends IPagadorClient_CreateTransactionRequestBase<RecurrentCreditCardPaymentRequest> {
+    export interface IPagadorClient_CreateRecurrentCreditCardTransactionRequestParameters extends
+        IPagadorClient_CreateTransactionRequestBase<RecurrentCreditCardPaymentRequest> {
 
     }
     export interface IPagadorClient_CreateDebitCardTransactionRequestParameters extends IPagadorClient_CreateTransactionRequestBase<DebitCardPaymentRequest & { Recurrent?: false }> {
@@ -493,7 +623,7 @@ export namespace BrasPag {
         /**
          * 	Código de retorno da Operação	Texto	32	Texto alfanumérico
          */
-        ReasonCode: string;
+        ReasonCode: number;
         /**
          * 	Mensagem de retorno da Operação	Texto	512	Texto alfanumérico
          */
@@ -501,7 +631,7 @@ export namespace BrasPag {
         /**
          * 	Status da Transação	Byte	2	Ex. 1
          */
-        Status: string;
+        Status: number;
         /**
          * 	Código retornado pelo provedor do meio de pagamento(adquirente e bancos)	Texto	32	57
          */
@@ -510,6 +640,9 @@ export namespace BrasPag {
          * 	Mensagem retornada pelo provedor do meio de pagamento(adquirente e bancos)	Texto	512	Transação Aprovada
          */
         ProviderReturnMessage: string;
+    }
+    export interface RecurrentCreditCardPaymentResponse extends CreditCardPaymentResponse {
+        RecurrentPayment: RecurrentPaymentResponse;
     }
     export interface DebitCardPaymentResponse extends PaymentResponseBase {
 
@@ -558,7 +691,7 @@ export namespace BrasPag {
         Recurrent: boolean;
         DoSplit: boolean;
         CreditCard: CreditCard;
-        Credentials: PaymentCredentials;
+        Credentials?: PaymentCredentials;
         ProofOfSale: string;
         AcquirerTransactionId: string;
         AuthorizationCode: string;
@@ -594,9 +727,9 @@ export namespace BrasPag {
         RejectReasons: Array<VelocityAnalysisRejectReason>;
     }
     export type RecurrentPaymentInterval = "Monthly" | "Bimonthly" | "Quarterly" | "SemiAnnual" | "Annual";
-    export interface RecurrentPaymentRequest {
-        AuthorizeNow: string,
-        EndDate: string,
+    export interface RecurrentPayment {
+        AuthorizeNow: boolean,
+        EndDate?: string,
         /**
          * Default: Monthly
          */
@@ -607,122 +740,124 @@ export namespace BrasPag {
     export interface IPagadorClient_CreateBoletoTransactionResponse {
 
     }
-    export interface IPagadorClient_CreateCreditCardTransactionResponse extends CreditCardPaymentResponse {
-
-        VelocityAnalysis?: VelocityAnalysisResult;
+    export interface IPagadorClient_CreateCreditCardTransactionResponse {
+        MerchantOrderId: string;
+        Customer: Customer;
+        Payment: CreditCardPaymentResponse & { VelocityAnalysis?: VelocityAnalysisResult };
     }
-    export interface IPagadorClient_CreateRecurrentCreditCardTransactionResponse extends CreditCardPaymentResponse {
-
-        VelocityAnalysis?: VelocityAnalysisResult;
+    export interface IPagadorClient_CreateRecurrentCreditCardTransactionResponse {
+        MerchantOrderId: string;
+        Customer: Customer;
+        Payment: RecurrentCreditCardPaymentResponse & { VelocityAnalysis?: VelocityAnalysisResult };
     }
     export interface IPagadorClient_CreateDebitCardTransactionResponse {
         /**
-         * 	Id da transação no provedor de meio de pagamento	
-         * 
-         * Texto	
-         * 
-         * 40	
-         * 
+         * 	Id da transação no provedor de meio de pagamento
+         *
+         * Texto
+         *
+         * 40
+         *
          * Texto alfanumérico
          */
         AcquirerTransactionId: string;
         /**
-         * 	Número do Comprovante de Venda	
-         * 
-         * Texto	
-         * 
-         * 20	
-         * 
+         * 	Número do Comprovante de Venda
+         *
+         * Texto
+         *
+         * 20
+         *
          * Texto alfanumérico
          */
         ProofOfSale: string;
         /**
-         * 	Código de autorização	
-         * 
-         * Texto	
-         * 
-         * 300	
-         * 
+         * 	Código de autorização
+         *
+         * Texto
+         *
+         * 300
+         *
          * Texto alfanumérico
          */
         AuthorizationCode: string;
         /**
-         * 	Campo Identificador do Pedido	
-         * 
-         * Guid	
-         * 
-         * 36	
-         * 
+         * 	Campo Identificador do Pedido
+         *
+         * Guid
+         *
+         * 36
+         *
          * xxxxxxxx - xxxx - xxxx - xxxx - xxxxxxxxxxxx
          */
         PaymentId: string;
         /**
-         * 	Data em que a transação foi recebida pela Brapag	
-         * 
-         * Texto	
-         * 
-         * 19	
-         * 
+         * 	Data em que a transação foi recebida pela Brapag
+         *
+         * Texto
+         *
+         * 19
+         *
          * AAAA - MM - DD HH: mm: SS
          */
         ReceivedDate: string;
         /**
-         * 	Código de retorno da Operação	
-         * 
-         * Texto	
-         * 
-         * 32	
-         * 
+         * 	Código de retorno da Operação
+         *
+         * Texto
+         *
+         * 32
+         *
          * Texto alfanumérico
          */
-        ReasonCode: string;
+        ReasonCode: number;
         /**
-         * 	Mensagem de retorno da Operação	
-         * 
-         * Texto	
-         * 
-         * 512	
-         * 
+         * 	Mensagem de retorno da Operação
+         *
+         * Texto
+         *
+         * 512
+         *
          * Texto alfanumérico
          */
         ReasonMessage: string;
         /**
-         * 	Status da Transação	
-         * 
-         * Byte	
-         * 
-         * 2	
-         * 
+         * 	Status da Transação
+         *
+         * Byte
+         *
+         * 2
+         *
          * Ex. 1
          */
-        Status: string;
+        Status: number;
         /**
-         * 	Código retornado pelo provedor do meio de pagamento(adquirente e bancos)	
-         * 
-         * Texto	
-         * 
-         * 32	
-         * 
+         * 	Código retornado pelo provedor do meio de pagamento(adquirente e bancos)
+         *
+         * Texto
+         *
+         * 32
+         *
          * 57
          */
         ProviderReturnCode: string;
         /**
-         * 	Mensagem retornada pelo provedor do meio de pagamento(adquirente e bancos)	
-         * 
-         * Texto	
-         * 
-         * 512	
-         * 
+         * 	Mensagem retornada pelo provedor do meio de pagamento(adquirente e bancos)
+         *
+         * Texto
+         *
+         * 512
+         *
          * Transação Aprovada
          */
         ProviderReturnMessage: string;
         /**
-         * 	URL para o qual o portador será redirecionado para autenticação	
-         * 
-         * Texto	
-         * 
-         * 56	
-         * 
+         * 	URL para o qual o portador será redirecionado para autenticação
+         *
+         * Texto
+         *
+         * 56
+         *
          * https://qasecommerce.cielo.com.br/web/index.cbmp?id=13fda1da8e3d90d3d0c9df8820b96a7f
          */
         AuthenticationUrl: string;
@@ -740,7 +875,7 @@ export namespace BrasPag {
         CapturedDate: string;
         CapturedAmount: number;
         ECI: string;
-        ReasonCode: string;
+        ReasonCode: number;
         ReasonMessage: string;
         Status: number;
         ProviderReturnCode: string;
@@ -775,7 +910,7 @@ export namespace BrasPag {
     }
     export interface IPagadorClient_PaymentCaptureResponse {
         Status: number;
-        ReasonCode: string;
+        ReasonCode: number;
         ReasonMessage: string;
         ProviderReasonCode?: string;
         ProviderReasonMessage?: string;
@@ -786,11 +921,14 @@ export namespace BrasPag {
     }
     export interface IPagadorClient_CancelTransactionResponse {
         Status: number;
-        ReasonCode: string;
+        ReasonCode: number;
         ReasonMessage: string;
-        ProviderReasonCode: string;
+        ProviderReasonCode: number;
         ProviderReasonMessage: string;
         Links: Array<BrasPagLink>;
+    }
+    export interface IPagadorClient_UpdateRecurrentPaymentInfoRequestParameters extends RecurrentCreditCardPaymentRequest {
+
     }
     export interface IPagadorClient_UpdateRecurrentCustomerInfoRequestParameters extends Customer {
 
@@ -819,7 +957,9 @@ export namespace BrasPag {
     export class PagadorClient {
         private transactionRequester: AxiosInstance;
         private retrievalRequester: AxiosInstance;
+        private environment: BraspagEnvironment;
         constructor(parameters: IParametersPagadorClient) {
+            this.environment = parameters.environment;
             this.transactionRequester = axios.create({
                 baseURL: baseUrl.PagadorClient[parameters.environment].transaction,
                 headers: {
@@ -842,7 +982,7 @@ export namespace BrasPag {
             data: any,
             requestId?: string,
             callback?: (err: any, resp: T) => void) {
-            return new Promise<T | IPagadorClient_RequestFailureResponse>((resolve, reject) => {
+            return new Promise<T & IPagadorClient_RequestFailureResponse>((resolve, reject) => {
                 requester.request({
                     method: parameters.method,
                     url: parameters.url,
@@ -866,35 +1006,73 @@ export namespace BrasPag {
             });
         }
         public createTransaction(data: IPagadorClient_CreateTransactionRequestParameters, requestId?: string) {
+            if (this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
+            if (data.Payment) {
+                if (typeof data.Payment.Amount === 'number') {
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2)) * 100;
+                }
+            }
             return this.__request<IPagadorClient_CreateTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
+
         public createCreditCardTransaction(data: IPagadorClient_CreateCreditCardTransactionRequestParameters, requestId?: string) {
-            return this.__request<IPagadorClient_CreateCreditCardTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
+            if (this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
+            if (data.Payment) {
+                if (typeof data.Payment.Amount === 'number') {
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2)) * 100;
+                }
+            }
+            return this.__request<IPagadorClient_CreateCreditCardTransactionResponse & IPagadorClient_RequestFailureResponse & IPagadorClient_RequestFailureError>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         public createRecurrentCreditCardTransaction(data: IPagadorClient_CreateRecurrentCreditCardTransactionRequestParameters, requestId?: string) {
             if (data) {
                 if (data.Payment) {
                     if (data.Payment.Recurrent !== true) data.Payment.Recurrent = true;
                 }
+                if (typeof data.Payment.Amount === 'number') {
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2)) * 100;
+                }
             }
+            if (this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
             return this.__request<IPagadorClient_CreateRecurrentCreditCardTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         public createDebitCardTransaction(data: IPagadorClient_CreateDebitCardTransactionRequestParameters, requestId?: string) {
+            if (this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
+            if(data.Payment){
+                if(typeof data.Payment.Amount === 'number'){
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2))*100;
+                }
+            }
             return this.__request<IPagadorClient_CreateDebitCardTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         public createRecurrentDebitCardTransaction(data: IPagadorClient_CreateRecurrentDebitTransactionRequestParameters, requestId?: string) {
+            //if(this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
+            if(data.Payment){
+                if(typeof data.Payment.Amount === 'number'){
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2))*100;
+                }
+            }
             return this.__request<IPagadorClient_CreateRecurrentDebitCardTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         public createEletronicTransferTransaction(data: IPagadorClient_CreateEletronicTransferTransactionRequestParameters, requestId?: string) {
+            //if(this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
+            if(data.Payment){
+                if(typeof data.Payment.Amount === 'number'){
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2))*100;
+                }
+            }
             return this.__request<IPagadorClient_CreateTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         public createBoletoTransaction(data: IPagadorClient_CreateBoletoTransactionRequestParameters, requestId?: string) {
+            if (this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
             return this.__request<IPagadorClient_CreateBoletoTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         public createEWalletTransaction(data: IPagadorClient_CreateEWalletTransactionRequestParameters, requestId?: string) {
+            //if(this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
             return this.__request<IPagadorClient_CreateTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         public createVoucherTransaction(data: IPagadorClient_CreateVoucherTransactionRequestParameters, requestId?: string) {
+            //if(this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
             return this.__request<IPagadorClient_CreateTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         public capturePaymentTransaction(PaymentId: string, data: IPagadorClient_PaymentCaptureRequestParameters, requestId?: string) {
@@ -912,10 +1090,10 @@ export namespace BrasPag {
             return this.__request<IPagadorClient_UpdateRecurrentCustomerInfoResponse>(this.transactionRequester, endpoints.PagadorClient.updateRecurrentEndDate(RecurrentPaymentId), EndDate, requestId);
         }
         /**
-         * 
-         * @param RecurrentPaymentId 
+         *
+         * @param RecurrentPaymentId
          * @param Interval 1 = Monthly; 2 = Bimonthly; 3 = Quartermonthly; 6 = Semimonthly; Annually
-         * @param requestId 
+         * @param requestId
          */
         public updateRecurrentInterval(RecurrentPaymentId: string, Interval: 1 | 2 | 3 | 6 | 12, requestId?: string) {
             return this.__request<boolean>(this.transactionRequester, endpoints.PagadorClient.updateRecurrentInterval(RecurrentPaymentId), Interval, requestId);
@@ -929,7 +1107,7 @@ export namespace BrasPag {
         public updateRecurrentNextPaymentDate(RecurrentPaymentId: string, data: string | Date | number, requestId?: string) {
             return this.__request<boolean>(this.transactionRequester, endpoints.PagadorClient.updateRecurrentNextPaymentDate(RecurrentPaymentId), data, requestId);
         }
-        public updateRecurrentPaymentInfo(RecurrentPaymentId: string, data: string | Date | number, requestId?: string) {
+        public updateRecurrentPaymentInfo(RecurrentPaymentId: string, data: IPagadorClient_UpdateRecurrentPaymentInfoRequestParameters, requestId?: string) {
             return this.__request<boolean>(this.transactionRequester, endpoints.PagadorClient.updateRecurrentPaymentInfo(RecurrentPaymentId), data, requestId);
         }
 
