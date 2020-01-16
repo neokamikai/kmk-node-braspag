@@ -31,6 +31,7 @@ const endpoints = {
         updateRecurrentPaymentInfo: (RecurrentPaymentId) => ({ method: 'PUT', url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Payment` }),
         deactivateRecurrency: (RecurrentPaymentId) => ({ method: 'PUT', url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Deactivate` }),
         reactivateRecurrency: (RecurrentPaymentId) => ({ method: 'PUT', url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Reactivate` }),
+        getTransactionInfo: (PaymentId) => ({ method: 'GET', url: `/v2/sales/${encodeURIComponent(PaymentId)}` }),
         applePay: { method: 'POST', url: '/1/sales/' },
         samsungPay: { method: 'POST', url: '/1/sales/' },
         androidPay: { method: 'POST', url: '/1/sales/' },
@@ -105,32 +106,29 @@ Não Autorizado	0000.0000.0000.0006	99	Time Out
     NaoAutorizado6: '0000000000000006',
 };
 function numberValidator(value) {
-}
-function toBraspagDateString(value) {
-    if (typeof value === 'string')
-        return toBraspagDateString(new Date(Date.parse(value)));
     if (typeof value === 'number')
-        return toBraspagDateString(new Date(value));
-    if (Object.getPrototypeOf(value) === Date.prototype) {
-        if (value.toJSON().match(/invalid/i))
-            throw new Error("Invalid date");
-        return `${value.getFullYear()}-${(value.getMonth() + 1).toString().padStart(2, '0')}-${(value.getDate()).toString().padStart(2, '0')}`;
-    }
-    else
-        throw new Error('Unexpected argument data type: ' + value);
+        return value.toFixed(2).replace(/[^\d]+/g, '');
+    return value;
 }
-function parseBrasPagDateStringToDate(value) {
-    return new Date(Date.parse(value));
-}
+// function toBraspagDateString(value: string | Date | number) {
+//     if (typeof value === 'string') return toBraspagDateString(new Date(Date.parse(value)));
+//     if (typeof value === 'number') return toBraspagDateString(new Date(value));
+//     if (Object.getPrototypeOf(value) === Date.prototype) {
+//         if (value.toJSON().match(/invalid/i)) throw new Error("Invalid date");
+//         return `${value.getFullYear()}-${(value.getMonth() + 1).toString().padStart(2, '0')}-${(value.getDate()).toString().padStart(2, '0')}`;
+//     }
+//     else throw new Error('Unexpected argument data type: ' + value);
+// }
+// function parseBrasPagDateStringToDate(value: string) {
+//     return new Date(Date.parse(value));
+// }
+// eslint-disable-next-line no-unused-vars
 const axios_1 = require("axios");
 var BrasPag;
 (function (BrasPag) {
     class Client3DS {
         constructor(parameters) {
-        }
-        auth(params) {
-            return new Promise((resolve, reject) => {
-            });
+            this.parameters = parameters;
         }
     }
     BrasPag.Client3DS = Client3DS;
@@ -154,7 +152,11 @@ var BrasPag;
                 }
             });
         }
-        __request(requester, parameters, data, requestId, callback) {
+        __request(requester, parameters, data, 
+        // eslint-disable-next-line no-unused-vars
+        requestId, 
+        // eslint-disable-next-line no-unused-vars
+        callback) {
             return new Promise((resolve, reject) => {
                 requester.request({
                     method: parameters.method,
@@ -289,8 +291,10 @@ var BrasPag;
         updateRecurrentPaymentInfo(RecurrentPaymentId, data, requestId) {
             return this.__request(this.transactionRequester, endpoints.PagadorClient.updateRecurrentPaymentInfo(RecurrentPaymentId), data, requestId);
         }
+        getTransactionInfo(PaymentId, requestId) {
+            return this.__request(this.transactionRequester, endpoints.PagadorClient.getTransactionInfo(PaymentId), null, requestId);
+        }
     }
     BrasPag.PagadorClient = PagadorClient;
 })(BrasPag = exports.BrasPag || (exports.BrasPag = {}));
-;
 exports.default = BrasPag;

@@ -840,6 +840,13 @@ export declare namespace BrasPag {
     }
     export interface IPagadorClient_UpdateRecurrentCustomerInfoResponse {
     }
+    export interface IPagadorClient_GetTransactionInfoResponse {
+        MerchantOrderId: string;
+        Customer: Customer;
+        Payment: (DebitCardPaymentResponse | CreditCardPaymentResponse) & {
+            VelocityAnalysis?: VelocityAnalysisResult;
+        };
+    }
     export interface IPagadorClient_RequestFailureError {
         Code: number;
         Message: string;
@@ -849,8 +856,8 @@ export declare namespace BrasPag {
         errors: Array<IPagadorClient_RequestFailureError>;
     }
     export class Client3DS {
+        private parameters;
         constructor(parameters: IParametersClient3DS);
-        auth(params: IClient3DS_AuthRequestParameters): Promise<IClient3DS_AuthResponse>;
     }
     export class PagadorClient {
         private transactionRequester;
@@ -882,6 +889,7 @@ export declare namespace BrasPag {
         updateRecurrentAmount(RecurrentPaymentId: string, data: number, requestId?: string): Promise<(false & IPagadorClient_RequestFailureResponse) | (true & IPagadorClient_RequestFailureResponse)>;
         updateRecurrentNextPaymentDate(RecurrentPaymentId: string, data: string | Date | number, requestId?: string): Promise<(false & IPagadorClient_RequestFailureResponse) | (true & IPagadorClient_RequestFailureResponse)>;
         updateRecurrentPaymentInfo(RecurrentPaymentId: string, data: IPagadorClient_UpdateRecurrentPaymentInfoRequestParameters, requestId?: string): Promise<(false & IPagadorClient_RequestFailureResponse) | (true & IPagadorClient_RequestFailureResponse)>;
+        getTransactionInfo(PaymentId: string, requestId?: string): Promise<IPagadorClient_GetTransactionInfoResponse & IPagadorClient_RequestFailureResponse>;
     }
     export {};
 }

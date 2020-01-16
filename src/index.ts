@@ -30,6 +30,7 @@ const endpoints = {
         updateRecurrentPaymentInfo: (RecurrentPaymentId) => ({ method: 'PUT' as Method, url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Payment` }),
         deactivateRecurrency: (RecurrentPaymentId) => ({ method: 'PUT' as Method, url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Deactivate` }),
         reactivateRecurrency: (RecurrentPaymentId) => ({ method: 'PUT' as Method, url: `/v2/RecurrentPayment/${encodeURIComponent(RecurrentPaymentId)}/Reactivate` }),
+        getTransactionInfo: (PaymentId) => ({ method: 'GET' as Method, url: `/v2/sales/${encodeURIComponent(PaymentId)}` }),
         applePay: { method: 'POST' as Method, url: '/1/sales/' },
         samsungPay: { method: 'POST' as Method, url: '/1/sales/' },
         androidPay: { method: 'POST' as Method, url: '/1/sales/' },
@@ -105,20 +106,22 @@ Não Autorizado	0000.0000.0000.0006	99	Time Out
     NaoAutorizado6: '0000000000000006',
 }
 function numberValidator(value: any) {
-
+    if (typeof value === 'number') return value.toFixed(2).replace(/[^\d]+/g, '');
+    return value;
 }
-function toBraspagDateString(value: string | Date | number) {
-    if (typeof value === 'string') return toBraspagDateString(new Date(Date.parse(value)));
-    if (typeof value === 'number') return toBraspagDateString(new Date(value));
-    if (Object.getPrototypeOf(value) === Date.prototype) {
-        if (value.toJSON().match(/invalid/i)) throw new Error("Invalid date");
-        return `${value.getFullYear()}-${(value.getMonth() + 1).toString().padStart(2, '0')}-${(value.getDate()).toString().padStart(2, '0')}`;
-    }
-    else throw new Error('Unexpected argument data type: ' + value);
-}
-function parseBrasPagDateStringToDate(value: string) {
-    return new Date(Date.parse(value));
-}
+// function toBraspagDateString(value: string | Date | number) {
+//     if (typeof value === 'string') return toBraspagDateString(new Date(Date.parse(value)));
+//     if (typeof value === 'number') return toBraspagDateString(new Date(value));
+//     if (Object.getPrototypeOf(value) === Date.prototype) {
+//         if (value.toJSON().match(/invalid/i)) throw new Error("Invalid date");
+//         return `${value.getFullYear()}-${(value.getMonth() + 1).toString().padStart(2, '0')}-${(value.getDate()).toString().padStart(2, '0')}`;
+//     }
+//     else throw new Error('Unexpected argument data type: ' + value);
+// }
+// function parseBrasPagDateStringToDate(value: string) {
+//     return new Date(Date.parse(value));
+// }
+// eslint-disable-next-line no-unused-vars
 import axios, { AxiosStatic, AxiosInstance, Method } from 'axios';
 export namespace BrasPag {
     export type BraspagEnvironment = 'sandbox' | 'production';
@@ -936,6 +939,11 @@ export namespace BrasPag {
     export interface IPagadorClient_UpdateRecurrentCustomerInfoResponse {
 
     }
+    export interface IPagadorClient_GetTransactionInfoResponse {
+        MerchantOrderId: string;
+        Customer: Customer;
+        Payment: (DebitCardPaymentResponse | CreditCardPaymentResponse) & { VelocityAnalysis?: VelocityAnalysisResult };
+    }
     export interface IPagadorClient_RequestFailureError {
         Code: number,
         Message: string
@@ -945,14 +953,15 @@ export namespace BrasPag {
         errors: Array<IPagadorClient_RequestFailureError>
     }
     export class Client3DS {
+        private parameters: IParametersClient3DS;
         constructor(parameters: IParametersClient3DS) {
-
+            this.parameters = parameters;
         }
-        public auth(params: IClient3DS_AuthRequestParameters) {
+        /*public auth(params: IClient3DS_AuthRequestParameters) {
             return new Promise<IClient3DS_AuthResponse>((resolve, reject) => {
 
             });
-        }
+        }*/
     }
     export class PagadorClient {
         private transactionRequester: AxiosInstance;
@@ -980,7 +989,9 @@ export namespace BrasPag {
         private __request<T>(requester: AxiosInstance,
             parameters: { method: Method, url: string },
             data: any,
+            // eslint-disable-next-line no-unused-vars
             requestId?: string,
+            // eslint-disable-next-line no-unused-vars
             callback?: (err: any, resp: T) => void) {
             return new Promise<T & IPagadorClient_RequestFailureResponse>((resolve, reject) => {
                 requester.request({
@@ -1038,27 +1049,27 @@ export namespace BrasPag {
         }
         public createDebitCardTransaction(data: IPagadorClient_CreateDebitCardTransactionRequestParameters, requestId?: string) {
             if (this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
-            if(data.Payment){
-                if(typeof data.Payment.Amount === 'number'){
-                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2))*100;
+            if (data.Payment) {
+                if (typeof data.Payment.Amount === 'number') {
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2)) * 100;
                 }
             }
             return this.__request<IPagadorClient_CreateDebitCardTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         public createRecurrentDebitCardTransaction(data: IPagadorClient_CreateRecurrentDebitTransactionRequestParameters, requestId?: string) {
             //if(this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
-            if(data.Payment){
-                if(typeof data.Payment.Amount === 'number'){
-                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2))*100;
+            if (data.Payment) {
+                if (typeof data.Payment.Amount === 'number') {
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2)) * 100;
                 }
             }
             return this.__request<IPagadorClient_CreateRecurrentDebitCardTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
         }
         public createEletronicTransferTransaction(data: IPagadorClient_CreateEletronicTransferTransactionRequestParameters, requestId?: string) {
             //if(this.environment === 'sandbox' && data.Payment) data.Payment.Provider = 'Simulado' as any;
-            if(data.Payment){
-                if(typeof data.Payment.Amount === 'number'){
-                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2))*100;
+            if (data.Payment) {
+                if (typeof data.Payment.Amount === 'number') {
+                    data.Payment.Amount = parseFloat(data.Payment.Amount.toFixed(2)) * 100;
                 }
             }
             return this.__request<IPagadorClient_CreateTransactionResponse>(this.transactionRequester, endpoints.PagadorClient.createTransaction, data, requestId);
@@ -1110,8 +1121,11 @@ export namespace BrasPag {
         public updateRecurrentPaymentInfo(RecurrentPaymentId: string, data: IPagadorClient_UpdateRecurrentPaymentInfoRequestParameters, requestId?: string) {
             return this.__request<boolean>(this.transactionRequester, endpoints.PagadorClient.updateRecurrentPaymentInfo(RecurrentPaymentId), data, requestId);
         }
+        public getTransactionInfo(PaymentId: string, requestId?: string) {
+            return this.__request<IPagadorClient_GetTransactionInfoResponse>(this.transactionRequester, endpoints.PagadorClient.getTransactionInfo(PaymentId), null, requestId);
+        }
 
     }
-};
+}
 
 export default BrasPag;
